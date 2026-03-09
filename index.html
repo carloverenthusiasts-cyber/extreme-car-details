@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extreme Car Details</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+</head>
+<body>
+
+<header class="main-header">
+    <a href="#" class="brand-logo">EXTREME CAR <span>DETAILS</span></a>
+</header>
+
+<div class="container" id="car-list">
+    <div style="text-align: center; padding: 50px;">
+        <h2 style="color: #d4af37;">Connecting to Sheets Database...</h2>
+    </div>
+</div>
+
+<script>
+    // अपनी Google Sheet का CSV लिंक यहाँ नीचे पेस्ट करें
+    const csv_url = https://docs.google.com/spreadsheets/d/1eBSXRe_fZdKj-UpeImjqudFypo8FgEvyaLhwcjgtls8/export?format=csv;
+
+    function init() {
+        Papa.parse(csv_url, {
+            download: true,
+            header: true,
+            complete: (results) => { displayData(results.data); }
+        });
+    }
+
+    function displayData(cars) {
+        const container = document.getElementById('car-list');
+        container.innerHTML = '';
+        cars.forEach(car => {
+            if(!car.CarName) return;
+            const carCard = `
+                <div class="car-card">
+                    <div class="car-header">
+                        <h2>${car.CarName}</h2>
+                        <span class="price-tag">₹${car.Price} Lakh*</span>
+                    </div>
+                    ${car.ImageURL ? `<img src="${car.ImageURL}" class="main-car-img">` : ''}
+                    <div class="specs-wrapper">
+                         <div class="category-box">
+                            <h3>Specifications</h3>
+                            <div class="s-row"><span>Engine</span><span>${car.EngineType}</span></div>
+                            <div class="s-row"><span>Turbo</span><span>${car.TurboCharger}</span></div>
+                            <div class="s-row"><span>Power</span><span>${car.MaxPower}</span></div>
+                         </div>
+                    </div>
+                </div>`;
+            container.innerHTML += carCard;
+        });
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
