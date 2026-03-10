@@ -20,42 +20,49 @@
 </div>
 
 <script>
-    // अपनी Google Sheet का CSV लिंक यहाँ नीचे पेस्ट करें
-    const csv_url = https://docs.google.com/spreadsheets/d/1eBSXRe_fZdKj-UpeImjqudFypo8FgEvyaLhwcjgtls8/export?format=csv;
+    // आपकी सही Google Sheet CSV लिंक
+const csv_url = "https://docs.google.com/spreadsheets/d/1eBSXRe_fZdKj-UpeImjqudFypo8FgEvyaLhwcjgtls8/export?format=csv&range=A1:Z100";
 
-    function init() {
-        Papa.parse(csv_url, {
-            download: true,
-            header: true,
-            complete: (results) => { displayData(results.data); }
-        });
-    }
+function init() {
+    Papa.parse(csv_url, {
+        download: true,
+        header: true,
+        complete: (results) => {
+            console.log(results.data); // चेकिंग के लिए
+            displayData(results.data);
+        }
+    });
+}
 
-    function displayData(cars) {
-        const container = document.getElementById('car-list');
-        container.innerHTML = '';
-        cars.forEach(car => {
-            if(!car.CarName) return;
-            const carCard = `
-                <div class="car-card">
-                    <div class="car-header">
-                        <h2>${car.CarName}</h2>
-                        <span class="price-tag">₹${car.Price} Lakh*</span>
+function displayData(cars) {
+    const container = document.getElementById('car-list');
+    container.innerHTML = '';
+    
+    cars.forEach(car => {
+        if(!car.CarName || car.CarName.trim() === "") return;
+        
+        const carCard = `
+            <div class="car-card">
+                <div class="car-header">
+                    <h2>${car.CarName}</h2>
+                    <span class="price-tag">₹${car.Price} Lakh*</span>
+                </div>
+                ${car.ImageURL ? `<img src="${car.ImageURL}" class="main-car-img">` : ''}
+                <div class="specs-wrapper">
+                    <div class="category-box">
+                        <h3>Main Specifications</h3>
+                        <div class="s-row"><span>Engine:</span><span>${car.EngineType || 'N/A'}</span></div>
+                        <div class="s-row"><span>Displacement:</span><span>${car.Displacement || 'N/A'}</span></div>
+                        <div class="s-row"><span>Power:</span><span>${car.MaxPower || 'N/A'}</span></div>
+                        <div class="s-row"><span>Torque:</span><span>${car.MaxTorque || 'N/A'}</span></div>
                     </div>
-                    ${car.ImageURL ? `<img src="${car.ImageURL}" class="main-car-img">` : ''}
-                    <div class="specs-wrapper">
-                         <div class="category-box">
-                            <h3>Specifications</h3>
-                            <div class="s-row"><span>Engine</span><span>${car.EngineType}</span></div>
-                            <div class="s-row"><span>Turbo</span><span>${car.TurboCharger}</span></div>
-                            <div class="s-row"><span>Power</span><span>${car.MaxPower}</span></div>
-                         </div>
-                    </div>
-                </div>`;
-            container.innerHTML += carCard;
-        });
-    }
-    window.onload = init;
+                </div>
+                <a href="${car.YouTubeLink || '#'}" target="_blank" style="display:block; text-align:center; background:red; color:white; padding:10px; text-decoration:none; margin-top:10px; border-radius:5px;">Watch on YouTube</a>
+            </div>`;
+        container.innerHTML += carCard;
+    });
+}
+window.onload = init;
 </script>
 </body>
 </html>
